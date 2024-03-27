@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+jinja2
+pydantic
+opencv-python
+python-multipart
+psutil
+torch
+matplotlib
+tqdm
+torchvision
+pandas
+ultralytics

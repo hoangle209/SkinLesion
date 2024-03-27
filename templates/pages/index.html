@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>Hệ thống nhận diện bệnh da liễu - MQ ICT SOLUTIONS</title>
+        <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
+        <link rel="icon" href="/static/assets/img/icon.ico" type="image/x-icon"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+        <!-- Fonts and icons -->
+        <script src="/static/assets/js/plugin/webfont/webfont.min.js"></script>
+        <script>
+        WebFont.load({
+            google: {"families":["Lato:300,400,700,900"]},
+            custom: {"families":["Flaticon", "Font Awesome 5 Solid", "Font Awesome 5 Regular", "Font Awesome 5 Brands", "simple-line-icons"], 
+            urls: ['/static/assets/css/fonts.min.css']},
+            active: function() {
+            sessionStorage.fonts = true;
+            }
+        });
+        
+        </script>
+        <style>
+        #upload {
+            opacity: 0;
+        }
+
+        #upload-label {
+            position: absolute;
+            top: 50%;
+            left: 1rem;
+            transform: translateY(-50%);
+        }
+
+        .image-area {
+            border: 2px dashed rgba(255, 255, 255, 0.7);
+            padding: 1rem;
+            position: relative;
+        }
+
+        .image-area::before {
+            content: 'Uploaded image result';
+            color: #fff;
+            font-weight: bold;
+            text-transform: uppercase;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.8rem;
+            z-index: 1;
+        }
+
+        .image-area img {
+            z-index: 2;
+            position: relative;
+        }
+
+        /*
+        *
+        * ==========================================
+        * FOR DEMO PURPOSES
+        * ==========================================
+        *
+        */
+        body {
+            min-height: 100vh;
+            background-color: #757f9a;
+            background-image: linear-gradient(147deg, #757f9a 0%, #d7dde8 100%);
+        }
+
+        .loading {
+            border: 16px solid #f3f3f3; /* Light grey */
+            border-top: 16px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+            position: absolute;
+            /* top: calc(50% - 60px); */
+            left: calc(50% - 60px);
+            z-index: 999;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        </style>
+        
+
+    </head>
+    <body>
+    </body>
+</html>
+
+
+<div class="container py-5">
+
+    <!-- For demo purpose -->
+    <header class="text-white text-center" >
+        <h1 class="display-4">Hệ thống nhận diện bệnh da liễu</h1>
+        <p class="lead mb-0">Hệ thống nhận diện hỗ trợ phân loại một số loại bệnh da liễu từ ảnh chụp vùng da bất thường</p>
+        <p class="font-weight-light">Được phát triển bởi
+            <a href="https://mqsolutions.vn" class="text-white">
+                <u>MQ ICT SOLUTIONS</u>
+            </a>
+        </p>
+    </header>
+
+    <div class="row py-4">
+        <div class="col-lg-6 mx-auto">
+            <!-- Upload image input-->
+            <div class="input-group mb-3 px-2 py-2 rounded-pill bg-white shadow-sm">
+                <input id="upload" type="file" class="form-control border-0">
+                <label id="upload-label" for="upload" class="font-weight-light text-muted">Chọn ảnh để nhận diện</label>
+                <div class="input-group-append">
+                    <label for="upload" class="btn btn-light m-0 rounded-pill px-4"> <i class="fa fa-cloud-upload mr-2 text-muted"></i><small class="text-uppercase font-weight-bold text-muted">Tải ảnh lên</small></label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Uploaded image area-->
+    <div class="loading"></div>
+    <div class="row">
+        <div class="col-6 image-zone" style="display: none;">
+            <p class="font-italic text-white text-center">Hình ảnh vùng da bất thường: </p>
+            <div class="image-area mt-4">
+                <img id="imageResult" src="#" alt="" class="img-fluid rounded shadow-sm mx-auto d-block">
+            </div>
+        </div>
+        <div class="col-6">
+            <div id="result">
+
+            </div>
+        </div>
+    </div>
+    <script src="/static/assets/js/core/jquery.3.2.1.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('.image-zone').css("display", "block");
+                    $('#imageResult')
+                        .attr('src', e.target.result);
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function sortByValue(jsObj){
+            let sortedArray = [];
+            for(var i in jsObj)
+            {
+                // Push each JSON Object entry in array by [value, key]
+                sortedArray.push([jsObj[i], i]);
+            }
+            return sortedArray.sort(function(a, b){return b[0] - a[0]});
+        }
+
+        $(function () {
+            $('#upload').on('change', function () {
+                $(".loading").show();
+                $('.image-zone').css("display", "none");
+                $("#result").empty();
+
+                var formData = new FormData();
+                formData.append('image', input.files[0]);
+                $.ajax({
+                    url: '/api/v1/skin_lesion',
+                    data: formData,
+                    type: 'POST',
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        $(".loading").hide()
+                        let predict = response.predict;
+                        let label_to_probabilities = response.label_to_probabilities;
+                        let result = sortByValue(label_to_probabilities);
+                        readURL(input);
+                        let sentence_conclusion = predict ? `<p class="font-weight-normal text-danger text-center"> => Kết luận: Bạn có thể đang bị mắc bệnh ${result[0][1]}</p>` : `<p class="font-weight-normal text-success text-center"> => Kết luận: Bạn bình thường</p>`;
+                        $("#result").html(`
+                            <div class="">
+                                <p class="font-italic text-white text-center">Top 5 kết quả dự đoán các bệnh da liễu: </p>
+                                <ul class="list-group">
+                                    <li class="list-group-item">${result[0][1]}<span class="badge badge-success float-right">${(result[0][0]*100).toFixed(2)}%</span></li>
+                                    <li class="list-group-item">${result[1][1]} <span class="badge badge-primary float-right">${(result[1][0]*100).toFixed(2)}%</span></li>
+                                    <li class="list-group-item">${result[2][1]} <span class="badge badge-secondary float-right">${(result[2][0]*100).toFixed(2)}%</span></li>
+                                    <li class="list-group-item">${result[3][1]} <span class="badge badge-secondary float-right">${(result[3][0]*100).toFixed(2)}%</span></li>
+                                    <li class="list-group-item">${result[4][1]} <span class="badge badge-secondary float-right">${(result[4][0]*100).toFixed(2)}%</span></li>
+                                </ul>
+                                <br />
+                                ${sentence_conclusion}
+                            </div>
+                        `)
+                    },
+                    error: function(error) {
+                        console.log(response);
+                    }
+
+                });
+            });
+        });
+
+        /*  ==========================================
+            SHOW UPLOADED IMAGE NAME
+        * ========================================== */
+        var input = document.getElementById( 'upload' );
+        var infoArea = document.getElementById( 'upload-label' );
+
+        input.addEventListener( 'change', showFileName );
+
+        function showFileName( event ) {
+            var input = event.srcElement;
+            var fileName = input.files[0].name;
+            infoArea.textContent = 'Ảnh tải lên: ' + fileName;
+        }
+  </script>
+</div>

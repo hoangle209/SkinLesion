@@ -1,0 +1,88 @@
+<style>
+.update-package-mqn{
+	background: white !important;
+	height: 70px;
+	position: relative;
+    top: 8px;
+}
+
+.update-package-mqn h1{
+	font-size: 18px;
+    color: black;
+    font-weight: bold;
+	text-transform: uppercase;
+	position: relative;
+    top: 5px;
+}
+.img-gif{
+	width: 60px;
+    position: relative;
+	top: 2px;
+    left: 8px;
+}
+</style>
+<!-- Sidebar -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<div class="sidebar sidebar-style-2" data-background-color="dark2">
+
+	<div class="sidebar-wrapper scrollbar scrollbar-inner">
+		<div class="sidebar-content">
+			<div class="user">
+				<div class="avatar-sm float-left mr-2">
+					<img src="{% if current_user.faces | length > 0 %} {{ current_user.faces[0].file_name }} {% else %} /static/assets/img/profile.jpg {% endif %} " alt="..." class="avatar-img rounded-circle">
+				</div>
+				<div class="info">
+					<a data-toggle="collapse" href="#collapseExample" aria-expanded="true">
+						<span>
+							{{ current_user.user }}
+							<span class="user-level">
+								{{ current_user.email or '' }}
+							</span>
+							<span class="caret"></span>
+						</span>
+					</a>
+					<div class="clearfix"></div>
+
+					<div class="collapse in" id="collapseExample">
+						<ul class="nav">
+							<li>
+								<a href="profile.html">
+									<span class="profile">{{ _('Trang cá nhân') }}</span>
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div class="hmenu">
+				<ul class="nav nav-primary">
+					<li class="nav-item">
+						<a href="/">
+							<i class="fas fa-home"></i>
+							<p>{{ _('Trang chủ') }}</p>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- End Sidebar -->
+
+
+<!-- Active menu -->
+<script>
+	$(document).ready(function () {
+		$('.hmenu').find('li').click(function (event) {
+			var $par = $(event.target).parents("li");
+			$(".hmenu .active").not($par).removeClass("active");
+			$(this).addClass('active');
+		});
+			$('.hmenu a').parent().removeClass('active');
+			let pathname = window.location.pathname;
+			if(pathname) {
+				$('.hmenu a[href="'+pathname.slice(1)+'"]').parent().addClass('active');
+			}
+	
+	});
+</script>
