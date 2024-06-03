@@ -1,5 +1,5 @@
 start_server:
-	uvicorn main:app --reload --port 5555 --host 0.0.0.0
+	uvicorn main:app --reload --port 5555 --host 0.0.0.0 --log-config=log_conf.yaml
 
 download_weight:
 	gdown --id 1sRs8OeQqCya82ymEJtsArzXhMJqyWYtn -O ./weights/
