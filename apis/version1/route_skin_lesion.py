@@ -7,12 +7,13 @@ from fastapi.responses import JSONResponse
 from skinlesion import YOLO as skYOLO
 
 import cv2
+import copy
 import json
 import numpy as np
 from typing import IO
 
 
-def validate_file_size_type(file: IO):
+async def validate_file_size_type(file: IO):
     FILE_SIZE = 5097152 # 5MB
 
     accepted_file_types = ["image/png", "image/jpeg", "image/jpg", "image/heic", "image/heif", "image/heics", "png",
@@ -35,12 +36,14 @@ def validate_file_size_type(file: IO):
             status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
             detail="Unsupported file type",
         )
-
+    
     real_file_size = 0
     for chunk in file.file:
         real_file_size += len(chunk)
         if real_file_size > FILE_SIZE:
             raise HTTPException(status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, detail="Too large")
+
+    await file.seek(0)
 
 
 router = APIRouter()
@@ -52,11 +55,11 @@ with open('conf_thresh.json') as file:
 
 
 @router.post("/")
-def create_user(image: UploadFile):
+async def predict(image: UploadFile):
     if not image:
         return {"message": "No upload file sent"}
-
-    validate_file_size_type(image)
+    
+    await validate_file_size_type(image)
     
     img = cv2.imdecode(np.asarray(
             bytearray(image.file.read()),
