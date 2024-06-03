@@ -1,4 +1,5 @@
 import filetype
+import aiofiles
 from fastapi import APIRouter
 from fastapi import UploadFile
 from fastapi import HTTPException, status
@@ -14,6 +15,13 @@ from typing import IO
 
 
 async def validate_file_size_type(file: IO):
+    # Save file for later traceback
+    file_location = f"uploads/{file.filename}"
+    async with aiofiles.open(file_location, 'wb') as out_file:
+        while content := await file.read(1024):  # async read chunk
+            await out_file.write(content)  # async write chunk
+    await file.seek(0)
+
     FILE_SIZE = 5097152 # 5MB
 
     accepted_file_types = ["image/png", "image/jpeg", "image/jpg", "image/heic", "image/heif", "image/heics", "png",

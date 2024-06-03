@@ -12,3 +12,4 @@ torchvision
 pandas
 filetype
 ultralytics
+aiofiles
