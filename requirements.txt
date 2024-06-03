@@ -10,4 +10,4 @@ matplotlib
 tqdm
 torchvision
 pandas
-ultralytics
+filetype
