@@ -11,3 +11,4 @@ tqdm
 torchvision
 pandas
 filetype
+ultralytics
