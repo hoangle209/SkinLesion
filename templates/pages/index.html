@@ -201,9 +201,14 @@
                         `)
                     },
                     error: function(error) {
-                        console.log(response);
+                        $(".loading").hide();
+                        $("#result").html(`
+                            <div class="">
+                                <p class="font-weight-normal text-danger text-center">${error?.responseJSON?.detail}</p>
+                            </div>
+                            
+                        `);
                     }
-
                 });
             });
         });
