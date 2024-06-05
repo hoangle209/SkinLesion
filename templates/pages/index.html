@@ -166,6 +166,10 @@
 
         $(function () {
             $('#upload').on('change', function () {
+		if(!input.files[0]){
+                        return;
+                }
+		    
                 $(".loading").show();
                 $('.image-zone').css("display", "none");
                 $("#result").empty();
